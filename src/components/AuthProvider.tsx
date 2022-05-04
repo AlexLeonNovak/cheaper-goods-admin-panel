@@ -1,40 +1,54 @@
-import React, { useEffect, useState } from 'react';
-import { IUser } from '../common/interfaces/user.interface';
-import { storage } from '../common/utils/storage';
+import React, { useMemo, useState } from 'react';
+import { IAuthData, IUser } from '../common/interfaces/user.interface';
 import { ChildrenProps } from '../common/types/children-props.type';
+import { storage } from '../common/utils/storage';
 export interface IAuthContext {
   isAuthenticated: boolean;
   user: IUser | null;
+  setAuthData: (authData: IAuthData | null) => void;
+  // setAuthenticated: (isAuthenticated: boolean) => void;
+  // setUser: (user: IUser | null) => void;
+  // onLogin?: () => void;
+  // onLogout?: () => void;
 }
-
-//
-// const [isAuthenticated, setIsAuthenticated] = useState(false);
-// const [user, setUser] = useState(null);
-//
 
 export const AuthContext = React.createContext<IAuthContext | null>(null);
 // const { Provider: AuthProvider } = AuthContext;
 
+// const usePrevious = (value: any) => {
+//   const ref = useRef();
+//   useEffect(() => {
+//     ref.current = value;
+//   }, [value]);
+//   return ref.current;
+// };
+
 export const AuthProvider = ({ children }: ChildrenProps) => {
-  const [user, setUser] = useState<IUser | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<IUser | null>(storage.user.get());
+  const [isAuthenticated, setIsAuthenticated] = useState(!!storage.token.get());
+  // const previousAuthenticated = usePrevious(isAuthenticated);
 
-  useEffect(() => {
-    const userStorage = storage.user.get();
-    userStorage && setUser(userStorage);
-    const token = storage.token.get();
-    token && setIsAuthenticated(!!token);
-  }, [storage]);
-
-  const initialState: IAuthContext = {
-    isAuthenticated,
-    user,
+  const setAuthData = (authData: IAuthData | null) => {
+    setUser(authData?.user || null);
+    setIsAuthenticated(!!authData);
+    storage.token.set(authData?.accessToken || null);
+    storage.user.set(authData?.user || null);
   };
-  // const { refreshToken } = useRefresh();
+
   // useEffect(() => {
-  //   if (initialState.isAuthenticated) {
-  //     refreshToken();
-  //   }
-  // }, [initialState]);
+  //   console.log('AuthProvider', storage);
+  //   setUser(storage.user.get());
+  //   setIsAuthenticated(!!storage.token.get());
+  // }, [storage]);
+
+  const initialState: IAuthContext = useMemo(
+    () => ({
+      isAuthenticated,
+      user,
+      setAuthData,
+    }),
+    [user],
+  );
+
   return <AuthContext.Provider value={initialState}>{children}</AuthContext.Provider>;
 };

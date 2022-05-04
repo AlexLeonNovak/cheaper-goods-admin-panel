@@ -20,6 +20,6 @@ export interface LoginRequest {
 }
 
 export interface IAuthData {
-  user?: IUser | null;
-  accessToken?: string | null;
+  user: IUser | null;
+  accessToken: string | null;
 }

@@ -1,5 +1,6 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { storage } from '../utils/storage';
+import { useRefresh } from '../../hooks/auth/useRefresh';
 
 export const BASE_URL = `${process.env.REACT_APP_API_URL}/api/v1`;
 
@@ -19,6 +20,24 @@ $api.interceptors.request.use((config: AxiosRequestConfig) => {
   }
   return config;
 });
+
+interface AxiosConfig extends AxiosRequestConfig {
+  _isRetry: boolean;
+}
+
+$api.interceptors.response.use(
+  config => config,
+  async (error: AxiosResponse) => {
+    const originalConfig = error.config as AxiosConfig;
+    if (error.request.status === 401 && !originalConfig._isRetry) {
+      originalConfig._isRetry = true;
+      const { refreshToken } = useRefresh();
+      await refreshToken();
+      return $api.request(originalConfig);
+    }
+    throw error;
+  },
+);
 
 // export const handleError = (error: AxiosError<IResponseError>) => {
 //   const responseError: ResponseError = {

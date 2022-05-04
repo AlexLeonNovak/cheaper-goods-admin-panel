@@ -1,10 +1,10 @@
 import { useMutation } from 'react-query';
 import { AuthResponse, LoginRequest } from '../../common/interfaces/user.interface';
 import { IResponse } from '../../common/interfaces/response.interface';
-import { storage } from '../../common/utils/storage';
 import { ResponseError } from '../../common/interfaces/errors';
 import $api from '../../common/config/api';
 import { AxiosError } from 'axios';
+import { useAuth } from './useAuth';
 
 const login = async (credentials: LoginRequest): Promise<IResponse<AuthResponse>> => {
   const res = await $api.post('/auth/login', credentials);
@@ -12,14 +12,14 @@ const login = async (credentials: LoginRequest): Promise<IResponse<AuthResponse>
 };
 
 export const useLogin = () => {
+  const { setAuthData } = useAuth();
   const { mutateAsync, isLoading, isSuccess, isError, error } = useMutation<
     IResponse<AuthResponse>,
     AxiosError<ResponseError>,
     LoginRequest
   >(login, {
     onSuccess: data => {
-      storage.token.set(data.result.accessToken);
-      storage.user.set(data.result.user);
+      setAuthData(data.result);
     },
   });
   // console.log(error?.response);

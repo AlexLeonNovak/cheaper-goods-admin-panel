@@ -1,6 +1,9 @@
 @import '@coreui/coreui/scss/coreui';
 @import '~bootstrap/dist/css/bootstrap.min.css';
 
-.mr-05 {
-  margin-right: .5em;
+.wrapper {
+  width: 100%;
+  will-change: auto;
+  padding-left: var(--cui-sidebar-occupy-start, 0);
+  @include transition(padding .15s);
 }

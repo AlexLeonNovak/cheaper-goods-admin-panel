@@ -1,20 +1,37 @@
-import axios from 'axios';
 import { BASE_URL } from '../../common/config/api';
 import { IResponse } from '../../common/interfaces/response.interface';
 import { AuthResponse } from '../../common/interfaces/user.interface';
-// import { setToken } from '../../common/services/token.service';
-import { useMutation } from 'react-query';
+import { useQuery } from 'react-query';
+import { useAuth } from './useAuth';
+import axios from 'axios';
+import { useEffect, useRef } from 'react';
 
 const refreshRequest = async (): Promise<IResponse<AuthResponse>> => {
-  const res = await axios.post(`${BASE_URL}/refresh`);
+  const res = await axios.get(`${BASE_URL}/auth/refresh`, {
+    withCredentials: true,
+  });
   return res.data;
 };
 
 export const useRefresh = () => {
-  const { mutateAsync } = useMutation(refreshRequest, {
-    // onSuccess: data => setToken(data.result.accessToken),
+  const { isAuthenticated, setAuthData } = useAuth();
+  const prevAuth = useRef<boolean>();
+
+  useEffect(() => {
+    prevAuth.current = isAuthenticated;
+  }, [isAuthenticated]);
+
+  console.log(prevAuth);
+  const { isLoading, refetch } = useQuery({
+    enabled: isAuthenticated && prevAuth.current === isAuthenticated,
+    queryFn: refreshRequest,
+    onSettled: data => setAuthData(data?.result || null),
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
+
   return {
-    refreshToken: mutateAsync,
+    refreshToken: refetch,
+    isLoading,
   };
 };

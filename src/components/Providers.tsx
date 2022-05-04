@@ -10,14 +10,14 @@ const queryClient = new QueryClient();
 export const Providers = ({ children }: ChildrenProps) => {
   return (
     <React.StrictMode>
-      <BrowserRouter>
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <QueryClientProvider client={queryClient}>
             {children}
             <ReactQueryDevtools initialIsOpen={false} />
-          </AuthProvider>
-        </QueryClientProvider>
-      </BrowserRouter>
+          </QueryClientProvider>
+        </BrowserRouter>
+      </AuthProvider>
     </React.StrictMode>
   );
 };

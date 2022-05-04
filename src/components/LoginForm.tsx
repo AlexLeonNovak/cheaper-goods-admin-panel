@@ -16,11 +16,11 @@ import {
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilLockLocked } from '@coreui/icons';
-import { useLogin } from '../../hooks/auth/useLogin';
-import { toast } from '../../common/utils/toast';
+import { useLogin } from '../hooks/auth/useLogin';
+import { toast } from '../common/utils/toast';
 import { Navigate } from 'react-router-dom';
-import { RouteList } from '../../common/enums/routes.enum';
-import { useAuth } from '../../hooks/auth/useAuth';
+import { RouteList } from '../common/enums/routes.enum';
+import { useAuth } from '../hooks/auth/useAuth';
 // import { useAuth } from '../hooks/auth/useAuth';
 // import { useAuth } from '../hooks/auth/useAuth';
 // import { useLoginMutation } from '../services/auth';
@@ -29,7 +29,7 @@ const Login: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const { isLoginLoading, login, isError, error, isFail } = useLogin();
+  const { isLoginLoading, login, isError, error, isFail, isSuccessLogin } = useLogin();
   const isValidationError = isError && !isFail && error?.response?.status === 422;
   const isBadRequestError = isError && !isFail && error?.response?.status === 400;
 
@@ -45,8 +45,7 @@ const Login: React.FC = () => {
 
   return (
     <>
-      {isAuthenticated && <Navigate to={RouteList.DASHBOARD} />}
-      {/*{isSuccessLogin && <Navigate to={RouteList.HOME} />}*/}
+      {(isSuccessLogin || isAuthenticated) && <Navigate to={RouteList.DASHBOARD} />}
       <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
         <CContainer>
           <CRow className="justify-content-center">
@@ -89,7 +88,7 @@ const Login: React.FC = () => {
                         <CCol className="me-auto">
                           <CButton color="primary" className="px-4" disabled={isLoginLoading} type="submit">
                             {isLoginLoading && (
-                              <CSpinner className="mr-05" component="span" size="sm" aria-hidden="true" />
+                              <CSpinner className="me-2" component="span" size="sm" aria-hidden="true" />
                             )}
                             Login
                           </CButton>
