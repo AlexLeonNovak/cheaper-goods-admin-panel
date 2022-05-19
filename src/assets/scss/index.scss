@@ -1,0 +1,21 @@
+@import 'variables';
+@import "mixins";
+@import '~bootstrap/dist/css/bootstrap.min.css';
+@import "~primereact/resources/themes/lara-light-blue/theme.css";
+@import "~primereact/resources/primereact.min.css";
+@import "~primeicons/primeicons.css";
+@import "~primeflex/primeflex.min.css";
+@import "sidebar";
+@import "header";
+@import "main";
+@import "custom";
+//@import "~primeflex/primeflex.min.css";
+//@import "~primeflex/themes/arya-blue";
+//@import "assets/layout/layout";
+
+//.wrapper {
+//  width: 100%;
+//  will-change: auto;
+//  padding-left: var(--cui-sidebar-occupy-start, 0);
+//  @include transition(padding .15s);
+//}

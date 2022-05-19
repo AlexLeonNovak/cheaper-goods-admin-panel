@@ -14,7 +14,7 @@ export interface AuthResponse {
   refreshToken: string;
 }
 
-export interface LoginRequest {
+export interface ICredentials {
   email: string;
   password: string;
 }

@@ -1,111 +1,69 @@
-import React, { SyntheticEvent, useEffect, useState } from 'react';
-import {
-  CButton,
-  CCard,
-  CCardBody,
-  CCardGroup,
-  CCol,
-  CContainer,
-  CForm,
-  CFormFeedback,
-  CFormInput,
-  CInputGroup,
-  CInputGroupText,
-  CRow,
-  CSpinner,
-} from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import { cilLockLocked } from '@coreui/icons';
-import { useLogin } from '../hooks/auth/useLogin';
-import { toast } from '../common/utils/toast';
+import React from 'react';
 import { Navigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { Card } from 'primereact/card';
+import { InputText } from 'primereact/inputtext';
+import { PrimeIcons } from 'primereact/api';
+import { Button } from 'primereact/button';
+import { useLogin } from '../hooks/auth/useLogin';
 import { RouteList } from '../common/enums/routes.enum';
 import { useAuth } from '../hooks/auth/useAuth';
-// import { useAuth } from '../hooks/auth/useAuth';
-// import { useAuth } from '../hooks/auth/useAuth';
-// import { useLoginMutation } from '../services/auth';
+import { ICredentials } from '../common/interfaces/user.interface';
 
 const Login: React.FC = () => {
   const { isAuthenticated } = useAuth();
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const { isLoginLoading, login, isError, error, isFail, isSuccessLogin } = useLogin();
-  const isValidationError = isError && !isFail && error?.response?.status === 422;
-  const isBadRequestError = isError && !isFail && error?.response?.status === 400;
-
-  const handleLogin = async (event: SyntheticEvent) => {
-    event.preventDefault();
-    await login({ email, password });
-  };
-  useEffect(() => {
-    if (isFail) {
-      toast.error(error?.message || 'Error');
-    }
-  }, [isFail, error]);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ICredentials>();
+  const { isLoginLoading, login, isError, error, isSuccessLogin } = useLogin();
 
   return (
     <>
       {(isSuccessLogin || isAuthenticated) && <Navigate to={RouteList.DASHBOARD} />}
       <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
-        <CContainer>
-          <CRow className="justify-content-center">
-            <CCol md={5}>
-              <CCardGroup>
-                <CCard className="p-4">
-                  <CCardBody>
-                    <CForm onSubmit={handleLogin}>
-                      <h1>Login</h1>
-                      <p className="text-medium-emphasis">Sign In to your account</p>
-                      <CInputGroup className="mb-3">
-                        <CInputGroupText>@</CInputGroupText>
-                        <CFormInput
-                          type="text"
-                          placeholder="name@example.com"
-                          onInput={e => setEmail(e.currentTarget.value)}
-                          required
-                          invalid={isError && !isFail}
-                          feedbackInvalid={isValidationError && error?.response?.data.details?.email?.join('<br>')}
-                          // valid={isSuccess}
-                        />
-                      </CInputGroup>
-                      <CInputGroup className="mb-4">
-                        <CInputGroupText id="passPrepend">
-                          <CIcon icon={cilLockLocked} />
-                        </CInputGroupText>
-                        <CFormInput
-                          type="password"
-                          placeholder="Password"
-                          onInput={e => setPassword(e.currentTarget.value)}
-                          aria-describedby="passPrepend"
-                          required
-                          invalid={isError && !isFail}
-                          // valid={isSuccess}
-                          feedbackInvalid={isValidationError && error?.response?.data.details?.password?.join('<br>')}
-                        />
-                        {isBadRequestError && <CFormFeedback invalid>{error?.response?.data.message}</CFormFeedback>}
-                      </CInputGroup>
-                      <CRow>
-                        <CCol className="me-auto">
-                          <CButton color="primary" className="px-4" disabled={isLoginLoading} type="submit">
-                            {isLoginLoading && (
-                              <CSpinner className="me-2" component="span" size="sm" aria-hidden="true" />
-                            )}
-                            Login
-                          </CButton>
-                        </CCol>
-                        <CCol className="text-end">
-                          <CButton color="link" className="px-0" onClick={() => toast('test')}>
-                            Forgot password?
-                          </CButton>
-                        </CCol>
-                      </CRow>
-                    </CForm>
-                  </CCardBody>
-                </CCard>
-              </CCardGroup>
-            </CCol>
-          </CRow>
-        </CContainer>
+        <div className="container">
+          <div className="row justify-content-center">
+            <div className="col-md-6">
+              <Card className="p-4">
+                <form onSubmit={handleSubmit(credentials => login(credentials))}>
+                  <h1>Login</h1>
+                  <p className="text-medium-emphasis">Sign In to your account</p>
+                  <div className="mb-3">
+                    <div className="p-inputgroup">
+                      <span className="p-inputgroup-addon">@</span>
+                      <InputText {...register('email')} type="email" placeholder="name@example.com" required />
+                    </div>
+                    {isError && error?.code === 422 && <small className="p-error">{error.details?.email}</small>}
+                    {errors.email && <small className="p-error">{errors.email.message}</small>}
+                  </div>
+                  <div className="mb-3">
+                    <div className="p-inputgroup">
+                      <div className="p-inputgroup-addon">
+                        <i className={PrimeIcons.LOCK}></i>
+                      </div>
+                      <InputText {...register('password')} type="password" placeholder="Password" required />
+                    </div>
+                    {isError && error?.code === 422 && <small className="p-error">{error.details?.password}</small>}
+                    {isError && error?.code === 400 && <small className="p-error">{error.message}</small>}
+                    {errors.password && <small className="p-error">{errors.password.message}</small>}
+                  </div>
+                  <div className="row">
+                    <div className="col me-auto">
+                      <Button color="primary" className="px-4" loading={isLoginLoading} type="submit" label="Login" />
+                    </div>
+                    {/*<div className="col text-end">*/}
+                    {/*  <Button className="p-button-link" onClick={() => toast('test')}>*/}
+                    {/*    Forgot password?*/}
+                    {/*  </Button>*/}
+                    {/*</div>*/}
+                  </div>
+                </form>
+              </Card>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );

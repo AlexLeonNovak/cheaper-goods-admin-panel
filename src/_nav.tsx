@@ -1,10 +1,8 @@
-import React, { ForwardRefExoticComponent } from 'react';
-import CIcon from '@coreui/icons-react';
-import { cilSpeedometer } from '@coreui/icons';
-import { CNavItem, CNavTitle } from '@coreui/react';
+import React from 'react';
 import { RouteList } from './common/enums/routes.enum';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBarcode, faSitemap, faShop, faMapLocation } from '@fortawesome/free-solid-svg-icons';
+import { PrimeIcons } from 'primereact/api';
 
 export interface Badge {
   color: string;
@@ -12,7 +10,7 @@ export interface Badge {
 }
 
 export interface NavItem {
-  component: ForwardRefExoticComponent<any>;
+  // component: ForwardRefExoticComponent<any>;
   name: string;
   to?: RouteList;
   icon?: any;
@@ -22,43 +20,43 @@ export interface NavItem {
 
 const _nav: NavItem[] = [
   {
-    component: CNavItem,
+    // component: CNavItem,
     name: 'Dashboard',
     to: RouteList.DASHBOARD,
-    icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
-    badge: {
-      color: 'info',
-      text: 'NEW',
-    },
+    icon: <i className={PrimeIcons.HOME}></i>,
+    // badge: {
+    //   color: 'info',
+    //   text: 'NEW',
+    // },
   },
   {
-    component: CNavTitle,
+    // component: CNavTitle,
     name: 'Goods',
   },
   {
-    component: CNavItem,
+    // component: CNavItem,
     name: 'Products',
     to: RouteList.PRODUCTS,
     icon: <FontAwesomeIcon icon={faBarcode} className="nav-icon" />,
   },
   {
-    component: CNavItem,
+    // component: CNavItem,
     name: 'Categories',
     to: RouteList.CATEGORIES,
     icon: <FontAwesomeIcon icon={faSitemap} className="nav-icon" />,
   },
   {
-    component: CNavTitle,
+    // component: CNavTitle,
     name: 'Stores',
   },
   {
-    component: CNavItem,
+    // component: CNavItem,
     name: 'Shops',
     to: RouteList.SHOPS,
     icon: <FontAwesomeIcon icon={faShop} className="nav-icon" />,
   },
   {
-    component: CNavItem,
+    // component: CNavItem,
     name: 'Shop addresses',
     to: RouteList.SHOP_ADDRESSES,
     icon: <FontAwesomeIcon icon={faMapLocation} className="nav-icon" />,

@@ -1,8 +1,8 @@
-import AppSidebar from '../components/AppSidebar';
-import AppContent from '../components/AppContent';
-import AppHeader from '../components/AppHeader';
-
 import React from 'react';
+import AppSidebar from '../components/AppSidebar';
+import AppHeader from '../components/AppHeader';
+import AppBreadcrumb from '../components/AppBreadcrumb';
+import AppContent from '../components/AppContent';
 
 const DefaultLayout = () => {
   return (
@@ -10,8 +10,13 @@ const DefaultLayout = () => {
       <AppSidebar />
       <div className="wrapper d-flex flex-column min-vh-100 bg-light">
         <AppHeader />
-        <div className="body flex-grow-1 px-3">
-          <AppContent />
+        <div className="body flex-grow-1">
+          <div className="container-fluid">
+            <div className="mb-2">
+              <AppBreadcrumb />
+            </div>
+            <AppContent />
+          </div>
         </div>
         {/*<AppFooter />*/}
       </div>

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-
-type Colors = 'primary' | 'danger' | 'success' | 'warning' | 'info';
+import { ToastSeverityType } from 'primereact/toast';
 
 export interface ToastData {
   id?: string;
-  color: Colors;
+  summary: string | null;
+  type: ToastSeverityType;
   message: string | null;
 }
 
@@ -17,7 +17,7 @@ const genId = (() => {
 
 let listener: ((state: ToastData) => void) | null = null;
 
-let memoryState: ToastData = { color: 'primary', message: null, id: genId() };
+let memoryState: ToastData = { type: 'info', summary: null, message: null, id: genId() };
 
 const createToast = (state: ToastData) => {
   state.id = genId();
@@ -26,15 +26,17 @@ const createToast = (state: ToastData) => {
     listener(state);
   }
 };
-const toast = (message: string, color: Colors = 'primary') => {
-  createToast({ message, color });
+const toast = (message: ToastData | string) => {
+  if (typeof message === 'string') {
+    return toast.info(message);
+  }
+  createToast(message);
 };
 
-toast.success = (message: string) => createToast({ message, color: 'success' });
-toast.error = (message: string) => createToast({ message, color: 'danger' });
-toast.warning = (message: string) => createToast({ message, color: 'warning' });
-toast.primary = (message: string) => createToast({ message, color: 'primary' });
-toast.info = (message: string) => createToast({ message, color: 'info' });
+toast.success = (message: string) => createToast({ message, summary: 'Success', type: 'success' });
+toast.error = (message: string) => createToast({ message, summary: 'Error', type: 'error' });
+toast.warning = (message: string) => createToast({ message, summary: 'Warning', type: 'warn' });
+toast.info = (message: string) => createToast({ message, summary: 'Information', type: 'info' });
 
 export { toast };
 

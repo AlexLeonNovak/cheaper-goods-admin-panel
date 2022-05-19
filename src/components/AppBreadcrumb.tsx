@@ -1,16 +1,12 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
-import { CBreadcrumb, CBreadcrumbItem } from '@coreui/react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import routes, { Route } from '../routes';
-
-interface Breadcrumb {
-  pathname: string;
-  name: string;
-  active: boolean;
-}
+import { BreadCrumb } from 'primereact/breadcrumb';
+import { MenuItem } from 'primereact/menuitem';
 
 const AppBreadcrumb = () => {
   const currentLocation = useLocation().pathname;
+  const navigate = useNavigate();
 
   const getRouteName = (pathname: string, routes: Route[]) => {
     const currentRoute = routes.find(route => route.path === pathname);
@@ -18,15 +14,15 @@ const AppBreadcrumb = () => {
   };
 
   const getBreadcrumbs = (location: string) => {
-    const breadcrumbs: Breadcrumb[] = [];
+    const breadcrumbs: MenuItem[] = [];
     location.split('/').reduce((prev, curr, index, array) => {
       const currentPathname = `${prev}/${curr}`;
       const routeName = getRouteName(currentPathname, routes);
       routeName &&
         breadcrumbs.push({
-          pathname: currentPathname,
-          name: routeName,
-          active: index + 1 === array.length,
+          command: () => navigate(currentPathname),
+          label: routeName,
+          expanded: index + 1 === array.length,
         });
       return currentPathname;
     });
@@ -34,19 +30,11 @@ const AppBreadcrumb = () => {
   };
 
   const breadcrumbs = getBreadcrumbs(currentLocation);
-
-  return (
-    <CBreadcrumb className="m-0 ms-2">
-      <CBreadcrumbItem href="/">Home</CBreadcrumbItem>
-      {breadcrumbs.map((breadcrumb, index) => {
-        return (
-          <CBreadcrumbItem {...(breadcrumb.active ? { active: true } : { href: breadcrumb.pathname })} key={index}>
-            {breadcrumb.name}
-          </CBreadcrumbItem>
-        );
-      })}
-    </CBreadcrumb>
-  );
+  const home: MenuItem = {
+    icon: 'pi pi-home',
+    command: () => navigate('/'),
+  };
+  return <BreadCrumb className="m-0" model={breadcrumbs} home={home} />;
 };
 
 export default React.memo(AppBreadcrumb);

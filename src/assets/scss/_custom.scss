@@ -1,0 +1,38 @@
+@keyframes p-progress-spinner-color {
+  0%, 100% {
+    stroke: var(--blue-300);
+  }
+}
+
+.p-card {
+  box-shadow: none;
+  border: 1px solid var(--surface-d);
+}
+
+.p-error {
+  display: inline-block;
+}
+
+.p-error::first-letter {
+  text-transform: capitalize;
+}
+.p-toolbar {
+  padding: 1rem;
+  margin-bottom: 2em;
+}
+
+.p-inputswitch-sm {
+  width: 2.1rem;
+  height: 1.2rem;
+
+  .p-inputswitch-slider:before {
+    width: 0.9rem;
+    height: 0.9rem;
+    margin-top: -0.45rem;
+    left: .155rem
+  }
+
+  &.p-inputswitch-checked .p-inputswitch-slider:before {
+    transform: translateX(.9rem);
+  }
+}
