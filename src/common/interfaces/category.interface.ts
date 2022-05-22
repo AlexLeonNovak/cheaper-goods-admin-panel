@@ -1,10 +1,8 @@
-import { BaseEntity } from './base.interface';
+import { IBaseEntity, IBaseInfo } from './base.interface';
 
-export interface ICategoryResponse extends BaseEntity {
+export interface ICategoryResponse extends IBaseEntity, IBaseInfo {
   rootCategory?: ICategoryResponse;
   subcategories?: ICategoryResponse[];
-  name: string;
-  description?: string;
   status: CategoryStatus;
 }
 
@@ -14,9 +12,7 @@ export enum CategoryStatus {
   DELETED = 'deleted',
 }
 
-export interface ICategoryCreate {
-  name: string;
-  description?: string;
+export interface ICategoryCreate extends IBaseInfo {
   root?: number;
   status?: CategoryStatus;
 }
